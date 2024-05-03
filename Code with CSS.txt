@@ -1,0 +1,68 @@
+import streamlit as st
+import pandas as pd
+from datetime import datetime
+
+# Function to display chat interface
+def chat_interface():
+    st.title("Simple Chatbot")
+    st.markdown(
+        """
+        <style>
+        /* Chat container */
+        .chat-container {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        /* Chat message */
+        .chat-message {
+            background-color: #ffffff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        /* User message */
+        .user-message {
+            background-color: #007bff;
+            color: #ffffff;
+            align-self: flex-end;
+        }
+        /* Bot message */
+        .bot-message {
+            background-color: #28a745;
+            color: #ffffff;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+    messages_df = pd.DataFrame(columns=["Time", "User", "Bot"])
+    
+    # Function to display a single chat message
+    def display_message(time, user, bot, css_class):
+        st.write(f"<div class='chat-message {css_class}'>[{time}] <strong>{user}:</strong> {bot}</div>", unsafe_allow_html=True)
+
+    # Main loop for user interaction
+    user_input = st.text_input("You", "")
+    if st.button("Send"):
+        current_time = datetime.now().strftime("%H:%M:%S")
+        display_message(current_time, "You", user_input, "user-message")
+        # Here you can add your logic for generating bot responses
+        bot_response = "Placeholder bot response"
+        display_message(current_time, "Bot", bot_response, "bot-message")
+        messages_df.loc[len(messages_df)] = [current_time, user_input, bot_response]
+        
+    # Display chat history
+    st.markdown("<div class='chat-container'>", unsafe_allow_html=True)
+    for index, row in messages_df.iterrows():
+        if row["User"] == "You":
+            display_message(row["Time"], row["User"], row["Bot"], "user-message")
+        else:
+            display_message(row["Time"], row["User"], row["Bot"], "bot-message")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+# Run the chat interface
+if __name__ == "__main__":
+    chat_interface()

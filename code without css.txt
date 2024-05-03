@@ -1,0 +1,33 @@
+import streamlit as st
+import pandas as pd
+from datetime import datetime
+
+# Function to display chat interface
+def chat_interface():
+    st.title("Simple Chatbot")
+    st.markdown("---")
+    st.sidebar.title("Chat History")
+    messages_df = pd.DataFrame(columns=["Time", "User", "Bot"])
+    
+    # Function to display a single chat message
+    def display_message(time, user, bot):
+        st.sidebar.write(f"[{time}] **{user}:** {bot}")
+
+    # Main loop for user interaction
+    user_input = st.text_input("You", "")
+    if st.button("Send"):
+        current_time = datetime.now().strftime("%H:%M:%S")
+        st.write(f"[{current_time}] **You:** {user_input}")
+        # Here you can add your logic for generating bot responses
+        bot_response = "Placeholder bot response"
+        st.write(f"[{current_time}] **Bot:** {bot_response}")
+        messages_df.loc[len(messages_df)] = [current_time, user_input, bot_response]
+        
+    # Display chat history
+    st.sidebar.markdown("---")
+    for index, row in messages_df.iterrows():
+        display_message(row["Time"], row["User"], row["Bot"])
+
+# Run the chat interface
+if __name__ == "__main__":
+    chat_interface()
